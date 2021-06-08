@@ -1,0 +1,63 @@
+##########################################################################
+# INTER-NMI BLOCKCHAIN NETWORK EXPERIMENT - PEER BASE - July/2020
+# This docker config profile defines peer base configuration. It should be
+# extended by the main docker-compose config in the files:
+# - peer-inmetro.yaml
+# - peer-ptb.yaml
+# - <any future NMI added to the project>
+# Author: Wilson S. Melo Jr. - Inmetro
+##########################################################################
+
+#defines de version of the docker-compose
+version: '2.2'
+
+services:
+  peer-base:
+    image: hyperledger/fabric-peer
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      # The CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE value starts chaincode containers on the same
+      # bridge network as the peers (details in https://docs.docker.com/compose/networking/).
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=nmiblocknet_default
+      - FABRIC_LOGGING_SPEC=INFO #values are FATAL | PANIC | ERROR | WARNING | INFO | DEBUG
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      # The CORE_PEER_MSPCONFIGPATH variable has a misusing conflict. Fabric uses it to determine
+      # at the same time the path to generate the peer PKI-ID (i.e., peer's certificates) and the
+      # org Admin (i.e., user's certificates). Because of this conflict, we need to choose which 
+      # configuration we want to active. In the first case, Fabric obligate us to redefine the var
+      # CORE_PEER_MSPCONFIGPATH each time we use the "peer channel|chaincode" command. Otherwise,
+      # peers from the same organization will have the same certificate, but GOSSIP protocol will
+      # not work.
+      # - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/admsp #use this if you don't need GOSSIP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp #if you need GOSSIP, but remember to redefine the var on each command "peer channel"
+      # Here we do the TLS config. Remember of defining /etc/hypereledger/tls in the peer instances.
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: peer node start #--peer-defaultchain=false
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./:/etc/hyperledger/configtx
+
+  cli-base:
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      # The CORE_PEER_MSPCONFIGPATH points to the Admin user MSP credentials
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/admsp
+      # Here we do the TLS config. Remember of defining /etc/hypereledger/tls in the cli instances.
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/tls/ca.crt
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./.:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts

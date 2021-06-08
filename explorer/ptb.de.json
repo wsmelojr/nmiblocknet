@@ -1,0 +1,74 @@
+{
+  "name":"nmiblocknet_default",
+  "version":"1.0.0",
+  "client":{
+    "tlsEnable": true,
+    "channel": "nmi-channel",
+    "adminUser": "admin",
+    "adminPassword": "adminpw",
+    "enableAuthentication": false,
+    "organization":"PTBMSP"
+  },
+  "channels": {
+    "nmi-channel": {
+      "peers": {
+          "peer0.ptb.de": {},
+          "peer1.ptb.de": {}
+      },
+      "connection": {
+        "timeout": {
+          "peer": {
+            "endorser": "6000",
+            "eventHub": "6000",
+            "eventReg": "6000"
+          }
+        }
+      }
+    }
+  },
+  "organizations":{
+    "PTBMSP":{
+      "mspid": "PTBMSP",
+      "adminPrivateKey":{
+         "path": "/tmp/crypto/peerOrganizations/ptb.de/users/Admin@ptb.de/msp/keystore/90b8738d740bd3dc1ed3ebba625c5fd448f0f54b6ecebfbb9307cdb76a23a8e0_sk"
+      },
+      "signedCert":{
+         "path": "/tmp/crypto/peerOrganizations/ptb.de/users/Admin@ptb.de/msp/signcerts/Admin@ptb.de-cert.pem"
+      }
+    }
+  },
+  "peers":{
+    "peer0.ptb.de":{
+      "url":"grpcs://peer0.ptb.de:7051",
+      "eventUrl":"grpcs://peer0.ptb.de:7053",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "peer0.ptb.de"
+      },
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/ptb.de/tlsca/tlsca.ptb.de-cert.pem"
+      },
+      "clientKey": {
+        "path": "/tmp/crypto/peerOrganizations/ptb.de/peers/peer0.ptb.de/tls/server.key"
+      },
+      "clientCert": {
+        "path": "/tmp/crypto/peerOrganizations/ptb.de/peers/peer0.ptb.de/tls/server.crt"
+      }
+    },
+    "peer1.ptb.de":{
+      "url":"grpcs://peer1.ptb.de:8051",
+      "eventUrl":"grpcs://peer1.ptb.de:8053",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "peer1.ptb.de"
+      },
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/ptb.de/tlsca/tlsca.ptb.de-cert.pem"
+      },
+      "clientKey": {
+        "path": "/tmp/crypto/peerOrganizations/ptb.de/peers/peer1.ptb.de/tls/server.key"
+      },
+      "clientCert": {
+        "path": "/tmp/crypto/peerOrganizations/ptb.de/peers/peer1.ptb.de/tls/server.crt"
+      }
+    }
+  }
+}

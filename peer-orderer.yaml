@@ -1,0 +1,53 @@
+##########################################################################
+# INTER-NMI BLOCKCHAIN NETWORK EXPERIMENT - SOLO ORDERER - July/2020
+# This docker config profile creates a solo orderer service, under the 
+# domain name orderer.nmi.
+# Author: Wilson S. Melo Jr. - Inmetro
+##########################################################################
+
+version: '2.2'
+# Use de structure networking for creating a separated network in docker.
+# I prefer to use the network default, so I keep this section commented.
+# networks:
+#   nmiblocknet:
+#     external:
+#       name: nmiblocknet
+
+services:
+  # Here we configre a solo orderer service. If you have a BFT orderer, you can just 
+  # discard this service. The assign of protocol ports requires special attention here. 
+  # Also, check the block genesis name
+  orderer.nmi:
+    container_name: orderer.nmi
+    image: hyperledger/fabric-orderer
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      # The block genesis name goes here. Change it if necessary
+      - ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/nmi-genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/msp
+      # Here we do the TLS config. Remember of defining /etc/hypereledger/tls volume correctly.
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    ports:
+      - 7050:7050
+    volumes:
+      - ./:/etc/hyperledger/configtx
+      - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/msp:/etc/hyperledger/msp
+      - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/tls:/etc/hyperledger/tls
+    # The section extra_hosts resolve the domain names for a multi host deploy.
+    # You MUST to inform the IP addresses for each peer outside of your network.
+    # You also CAN define the vars in the .env file (more practical, since you define
+    # in one place alone.)
+    extra_hosts:
+      #- "orderer.nmi:${ORDERER_IP}"
+      - "peer0.ptb.de:${PTB_IP_1}"
+      - "peer1.ptb.de:${PTB_IP_1}"
+      - "peer0.inmetro.br:${INMETRO_IP_1}"
+      - "peer1.inmetro.br:${INMETRO_IP_1}"

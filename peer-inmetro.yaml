@@ -1,0 +1,140 @@
+##########################################################################
+# INTER-NMI BLOCKCHAIN NETWORK EXPERIMENT - INMETRO PEERS - July/2020
+# This docker config profile creates:
+# - 2 peers to the organization inmetro.br (peer0 and peer1)
+# - 2 couchdb instancies, one for each peer (inmetrodb0 and inmetrodb1)
+# - 1 client docker for testing and smart contract deploying (cli0)
+#   - Notice that cli0 is configured to work with peer0. If you need
+#     to operate over other peers, modify cli0 or creat a new client.
+# Author: Wilson S. Melo Jr. - Inmetro
+##########################################################################
+
+version: '2.2'
+# Use de structure networking for creating a separated network in docker.
+# I prefer to use the network default, so I keep this section commented.
+# networks:
+#   nmiblocknet:
+#     external:
+#       name: nmiblocknet
+
+services:
+  # We create the peers here. They follow the template strutucture of Hyperledger Fabric names,
+  # and each peer have its own instance of couchdb. Be careful about ports assign and the volumes
+  # which are mounted in each peer.
+  peer0.inmetro.br:
+    # I am using a base config in peer-base.yaml. Parameters that are the same for all the peers
+    # are stored there.
+    extends:    
+      file: peer-base.yaml
+      service: peer-base
+    container_name: peer0.inmetro.br
+    environment:
+      - CORE_PEER_ID=peer0.inmetro.br
+      - CORE_PEER_ADDRESS=peer0.inmetro.br:7051
+      - CORE_PEER_LOCALMSPID=InmetroMSP
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=inmetrodb0:5984
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.inmetro.br:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.inmetro.br:7051
+    ports:
+      - 7051:7051
+      - 7053:7053
+    volumes:
+        - ./crypto-config/peerOrganizations/inmetro.br/peers/peer0.inmetro.br/msp:/etc/hyperledger/msp #Peers MSP credentials to the GOSSIP protocol
+        - ./crypto-config/peerOrganizations/inmetro.br/peers/peer0.inmetro.br/tls:/etc/hyperledger/tls #TLS certificates
+        - ./crypto-config/peerOrganizations/inmetro.br/users/Admin@inmetro.br/msp:/etc/hyperledger/admsp #Admin user MSP credentials
+        - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/msp/tlscacerts:/etc/hyperledger/tlscacerts #Orderer credentials
+    # The section extra_hosts resolve the domain names for a multi host deploy.
+    # You MUST to inform the IP addresses for each peer outside of your network.
+    # You also CAN define the vars in the .env file (more practical, since you define
+    # in one place alone.)
+    extra_hosts:
+      - "orderer.nmi:${ORDERER_IP}"
+      - "peer0.ptb.de:${PTB_IP_1}"
+      - "peer1.ptb.de:${PTB_IP_1}"
+      #- "peer0.inmetro.br:${INMETRO_IP_1}"
+      #- "peer1.inmetro.br:${INMETRO_IP_1}"
+    depends_on:
+      - inmetrodb0
+
+  inmetrodb0:
+    container_name: inmetrodb0
+    image: hyperledger/fabric-couchdb:0.4.15
+    ports:
+      - 5984:5984
+    environment:
+      DB_URL: http://localhost:5984/member_db
+
+  peer1.inmetro.br:
+    # I am using a base config in peer-base.yaml. Parameters that are the same for all the peers
+    # are stored there.
+    extends:    
+      file: peer-base.yaml
+      service: peer-base
+    container_name: peer1.inmetro.br
+    environment:
+      - CORE_PEER_ID=peer1.inmetro.br
+      - CORE_PEER_ADDRESS=peer1.inmetro.br:7051
+      - CORE_PEER_LOCALMSPID=InmetroMSP
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=inmetrodb1:5984
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.inmetro.br:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.inmetro.br:7051
+    ports:
+      - 8051:7051
+      - 8053:7053
+    volumes:
+        - ./crypto-config/peerOrganizations/inmetro.br/peers/peer1.inmetro.br/msp:/etc/hyperledger/msp #Peers MSP credentials to the GOSSIP protocol
+        - ./crypto-config/peerOrganizations/inmetro.br/peers/peer1.inmetro.br/tls:/etc/hyperledger/tls #TLS certificates
+        - ./crypto-config/peerOrganizations/inmetro.br/users/Admin@inmetro.br/msp:/etc/hyperledger/admsp #Admin user MSP credentials
+        - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/msp/tlscacerts:/etc/hyperledger/tlscacerts #Orderer credentials
+    extra_hosts:
+    # The section extra_hosts resolve the domain names for a multi host deploy.
+    # You MUST to inform the IP addresses for each peer outside of your network.
+    # You also CAN define the vars in the .env file (more practical, since you define
+    # in one place alone.)
+    extra_hosts:
+      - "orderer.nmi:${ORDERER_IP}"
+      - "peer0.ptb.de:${PTB_IP_1}"
+      - "peer1.ptb.de:${PTB_IP_1}"
+      #- "peer0.inmetro.br:${INMETRO_IP_1}"
+      #- "peer1.inmetro.br:${INMETRO_IP_1}"
+    depends_on:
+      - inmetrodb1
+
+  inmetrodb1:
+    container_name: inmetrodb1
+    image: hyperledger/fabric-couchdb:0.4.15
+    ports:
+      - 6984:5984
+    environment:
+      DB_URL: http://localhost:6984/member_db
+
+  # At the end, I am including an instance of a cli container to make tests in the same machine
+  # where the peers are running. This container can be instantiated independently in a client
+  # machine. You just need to worry about the proper domain names resolution.
+  cli0:
+    extends:    
+      file: peer-base.yaml
+      service: cli-base  
+    container_name: cli0
+    environment:
+      - CORE_PEER_ID=cli0
+      - CORE_PEER_ADDRESS=peer0.inmetro.br:7051
+      - CORE_PEER_LOCALMSPID=InmetroMSP
+    # command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME}; sleep $TIMEOUT'
+    volumes:
+        - ./crypto-config/peerOrganizations/inmetro.br/peers/peer0.inmetro.br/msp:/etc/hyperledger/msp #Peers MSP credentials to the GOSSIP protocol
+        - ./crypto-config/peerOrganizations/inmetro.br/peers/peer0.inmetro.br/tls:/etc/hyperledger/tls #TLS certificates
+        - ./crypto-config/peerOrganizations/inmetro.br/users/Admin@inmetro.br/msp:/etc/hyperledger/admsp #Admin user MSP credentials
+        - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/msp/tlscacerts:/etc/hyperledger/tlscacerts #Orderer credentials
+    # The section extra_hosts resolve the domain names for a multi host deploy.
+    # You MUST to inform the IP addresses for each peer outside of your network.
+    # You also CAN define the vars in the .env file (more practical, since you define
+    # in one place alone.)
+    extra_hosts:
+      - "orderer.nmi:${ORDERER_IP}"
+      - "peer0.ptb.de:${PTB_IP_1}"
+      - "peer1.ptb.de:${PTB_IP_1}"
+      #- "peer0.inmetro.br:${INMETRO_IP_1}"
+      #- "peer1.inmetro.br:${INMETRO_IP_1}"
+    depends_on:
+      - peer0.inmetro.br

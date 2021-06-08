@@ -1,0 +1,68 @@
+##########################################################################
+# INTER-NMI BLOCKCHAIN NETWORK EXPERIMENT - CRYPTO CONFIG - July/2020
+# This profile detemines the nmiblocknet configuration. It follows the 
+# standard from other Fabric networks configuration.
+# It contemplates an inter NMI blockchain network consortium with Inmetro 
+# and PTB (so far). The present configuration creates two ordinary peers
+# for each organization.
+# It also includes a solo orderer on the domain orderer.nmi. 
+# Author: Wilson S. Melo Jr. - Inmetro
+##########################################################################
+#
+# ---------------------------------------------------------------------------
+# "OrdererOrgs" - Define as organizacoes gerenciando os peers de consenso
+# ---------------------------------------------------------------------------
+OrdererOrgs:
+  # ---------------------------------------------------------------------------
+  # Orderer
+  # ---------------------------------------------------------------------------
+  - Name: Orderer
+    # Usando quinta.com como dominio raiz para todos os peers
+    Domain: orderer.nmi
+    Specs:
+      - Hostname: orderer.nmi
+        SANS:
+          - "localhost"
+          - "127.0.0.1"
+          - orderer.nmi
+
+# ---------------------------------------------------------------------------
+# "PeerOrgs" - Define as organizacoes que gerenciam os peers
+# ---------------------------------------------------------------------------
+PeerOrgs:
+  # ---------------------------------------------------------------------------
+  # Sao criadas duas organizacoes (LaSIGE e Inmetro), cada uma com 4 peers
+  # ---------------------------------------------------------------------------
+  - Name: PTB
+    Domain: ptb.de
+    Specs:
+      - Hostname: peer0
+        CommonName: peer0.ptb.de
+        SANS:
+           - "localhost"
+           - peer0.ptb.de
+           
+      - Hostname: peer1
+        CommonName: peer1.ptb.de
+        SANS:
+           - "localhost"
+           - peer1.ptb.de
+    Users:
+      Count: 0
+
+  - Name: Inmetro
+    Domain: inmetro.br
+    Specs:
+      - Hostname: peer0
+        CommonName: peer0.inmetro.br
+        SANS:
+           - "localhost"
+           - peer0.inmetro.br
+           
+      - Hostname: peer1
+        CommonName: peer1.inmetro.br
+        SANS:
+           - "localhost"
+           - peer1.inmetro.br
+    Users:
+      Count: 0

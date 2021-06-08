@@ -1,0 +1,9 @@
+{
+	"network-configs": {
+		"nmiblocknet_default": {
+			"name": "nmiblocknet_default",
+			"profile": "./connection-profile/ptb.de.json"
+		}
+	},
+	"license": "Apache-2.0"
+}

@@ -1,0 +1,74 @@
+{
+  "name":"nmiblocknet_default",
+  "version":"1.0.0",
+  "client":{
+    "tlsEnable": true,
+    "channel": "nmi-channel",
+    "adminUser": "admin",
+    "adminPassword": "adminpw",
+    "enableAuthentication": true,
+    "organization":"InmetroMSP"
+  },
+  "channels": {
+    "nmi-channel": {
+      "peers": {
+          "peer0.inmetro.br": {},
+          "peer1.inmetro.br": {}
+      },
+      "connection": {
+        "timeout": {
+          "peer": {
+            "endorser": "6000",
+            "eventHub": "6000",
+            "eventReg": "6000"
+          }
+        }
+      }
+    }
+  },
+  "organizations":{
+    "InmetroMSP":{
+      "mspid": "InmetroMSP",
+      "adminPrivateKey":{
+         "path": "/tmp/crypto/peerOrganizations/inmetro.br/users/Admin@inmetro.br/msp/keystore/e16b3305d87eb3973f9d33109bcd54508293ab385d54f2e509c56e701d7f3dcd_sk"
+      },
+      "signedCert":{
+         "path": "/tmp/crypto/peerOrganizations/inmetro.br/users/Admin@inmetro.br/msp/signcerts/Admin@inmetro.br-cert.pem"
+      }
+    }
+  },
+  "peers":{
+    "peer0.inmetro.br":{
+      "url":"grpcs://peer0.inmetro.br:7051",
+      "eventUrl":"grpcs://peer0.inmetro.br:7053",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "peer0.inmetro.br"
+      },
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/inmetro.br/tlsca/tlsca.inmetro.br-cert.pem"
+      },
+      "clientKey": {
+        "path": "/tmp/crypto/peerOrganizations/inmetro.br/peers/peer0.inmetro.br/tls/server.key"
+      },
+      "clientCert": {
+        "path": "/tmp/crypto/peerOrganizations/inmetro.br/peers/peer0.inmetro.br/tls/server.crt"
+      }
+    },
+    "peer1.inmetro.br":{
+      "url":"grpcs://peer1.inmetro.br:8051",
+      "eventUrl":"grpcs://peer1.inmetro.br:8053",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "peer1.inmetro.br"
+      },
+      "tlsCACerts": {
+        "path": "/tmp/crypto/peerOrganizations/inmetro.br/tlsca/tlsca.inmetro.br-cert.pem"
+      },
+      "clientKey": {
+        "path": "/tmp/crypto/peerOrganizations/inmetro.br/peers/peer1.inmetro.br/tls/server.key"
+      },
+      "clientCert": {
+        "path": "/tmp/crypto/peerOrganizations/inmetro.br/peers/peer1.inmetro.br/tls/server.crt"
+      }
+    }
+  }
+}
