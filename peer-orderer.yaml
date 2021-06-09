@@ -17,8 +17,8 @@ services:
   # Here we configre a solo orderer service. If you have a BFT orderer, you can just 
   # discard this service. The assign of protocol ports requires special attention here. 
   # Also, check the block genesis name
-  orderer.nmi:
-    container_name: orderer.nmi
+  solo.orderer.nmi:
+    container_name: solo.orderer.nmi
     image: hyperledger/fabric-orderer
     environment:
       - ORDERER_GENERAL_LOGLEVEL=debug
@@ -39,8 +39,8 @@ services:
       - 7050:7050
     volumes:
       - ./:/etc/hyperledger/configtx
-      - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/msp:/etc/hyperledger/msp
-      - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/tls:/etc/hyperledger/tls
+      - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/solo.orderer.nmi/msp:/etc/hyperledger/msp
+      - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/solo.orderer.nmi/tls:/etc/hyperledger/tls
     # The section extra_hosts resolve the domain names for a multi host deploy.
     # You MUST to inform the IP addresses for each peer outside of your network.
     # You also CAN define the vars in the .env file (more practical, since you define

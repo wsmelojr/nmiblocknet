@@ -42,13 +42,13 @@ services:
         - ./crypto-config/peerOrganizations/ptb.de/peers/peer0.ptb.de/msp:/etc/hyperledger/msp #Peers MSP credentials to the GOSSIP protocol
         - ./crypto-config/peerOrganizations/ptb.de/peers/peer0.ptb.de/tls:/etc/hyperledger/tls #TLS certificates
         - ./crypto-config/peerOrganizations/ptb.de/users/Admin@ptb.de/msp:/etc/hyperledger/admsp #Admin user MSP credentials
-        - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/msp/tlscacerts:/etc/hyperledger/tlscacerts #Orderer credentials
+        - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/solo.orderer.nmi/msp/tlscacerts:/etc/hyperledger/tlscacerts #Orderer credentials
     # The section extra_hosts resolve the domain names for a multi host deploy.
     # You MUST to inform the IP addresses for each peer outside of your network.
     # You also CAN define the vars in the .env file (more practical, since you define
     # in one place alone.)
     extra_hosts:
-      - "orderer.nmi:${ORDERER_IP}"
+      - "solo.orderer.nmi:${ORDERER_IP}"
       #- "peer0.ptb.de:${PTB_IP_1}"
       #- "peer1.ptb.de:${PTB_IP_1}"
       - "peer0.inmetro.br:${INMETRO_IP_1}"
@@ -85,13 +85,13 @@ services:
         - ./crypto-config/peerOrganizations/ptb.de/peers/peer1.ptb.de/msp:/etc/hyperledger/msp #Peers MSP credentials to the GOSSIP protocol
         - ./crypto-config/peerOrganizations/ptb.de/peers/peer1.ptb.de/tls:/etc/hyperledger/tls #TLS certificates
         - ./crypto-config/peerOrganizations/ptb.de/users/Admin@ptb.de/msp:/etc/hyperledger/admsp #Admin user MSP credentials
-        - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/msp/tlscacerts:/etc/hyperledger/tlscacerts #Orderer credentials
+        - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/solo.orderer.nmi/msp/tlscacerts:/etc/hyperledger/tlscacerts #Orderer credentials
     # The section extra_hosts resolve the domain names for a multi host deploy.
     # You MUST to inform the IP addresses for each peer outside of your network.
     # You also CAN define the vars in the .env file (more practical, since you define
     # in one place alone.)
     extra_hosts:
-      - "orderer.nmi:${ORDERER_IP}"
+      - "solo.orderer.nmi:${ORDERER_IP}"
       #- "peer0.ptb.de:${PTB_IP_1}"
       #- "peer1.ptb.de:${PTB_IP_1}"
       - "peer0.inmetro.br:${INMETRO_IP_1}"
@@ -127,13 +127,13 @@ services:
       - ./crypto-config/peerOrganizations/ptb.de/peers/peer0.ptb.de/msp:/etc/hyperledger/msp #Peers MSP credentials to the GOSSIP protocol
       - ./crypto-config/peerOrganizations/ptb.de/peers/peer0.ptb.de/tls:/etc/hyperledger/tls #TLS certificates
       - ./crypto-config/peerOrganizations/ptb.de/users/Admin@ptb.de/msp:/etc/hyperledger/admsp #Admin user MSP credentials
-      - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/orderer.nmi.orderer.nmi/msp/tlscacerts/:/etc/hyperledger/tlscacerts #Orderer credentials
+      - ./crypto-config/ordererOrganizations/orderer.nmi/orderers/solo.orderer.nmi/msp/tlscacerts/:/etc/hyperledger/tlscacerts #Orderer credentials
     # The section extra_hosts resolve the domain names for a multi host deploy.
     # You MUST to inform the IP addresses for each peer outside of your network.
     # You also CAN define the vars in the .env file (more practical, since you define
     # in one place alone.)
     extra_hosts:
-      - "orderer.nmi:${ORDERER_IP}"
+      - "solo.orderer.nmi:${ORDERER_IP}"
       #- "peer0.ptb.de:${PTB_IP_1}"
       #- "peer1.ptb.de:${PTB_IP_1}"
       - "peer0.inmetro.br:${INMETRO_IP_1}"

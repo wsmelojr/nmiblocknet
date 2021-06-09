@@ -20,18 +20,18 @@ OrdererOrgs:
     # Usando quinta.com como dominio raiz para todos os peers
     Domain: orderer.nmi
     Specs:
-      - Hostname: orderer.nmi
+      - Hostname: solo
         SANS:
           - "localhost"
           - "127.0.0.1"
-          - orderer.nmi
+          - solo.orderer.nmi
 
 # ---------------------------------------------------------------------------
 # "PeerOrgs" - Define as organizacoes que gerenciam os peers
 # ---------------------------------------------------------------------------
 PeerOrgs:
   # ---------------------------------------------------------------------------
-  # Sao criadas duas organizacoes (LaSIGE e Inmetro), cada uma com 4 peers
+  # Sao criadas duas organizacoes (PTB e Inmetro), cada uma com 2 peers
   # ---------------------------------------------------------------------------
   - Name: PTB
     Domain: ptb.de

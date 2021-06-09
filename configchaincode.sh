@@ -20,7 +20,7 @@
 
 # Remember to configure these auxiliar vars. They must reflect any name change
 # when necessary.
-ORDERER=orderer.nmi:7050
+ORDERER=solo.orderer.nmi:7050
 CHANNEL=nmi-channel
 MSPCONFIGPATH=/etc/hyperledger/admsp
 CAFILE=/etc/hyperledger/tlscacerts/tlsca.orderer.nmi-cert.pem

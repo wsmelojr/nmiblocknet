@@ -90,7 +90,7 @@ Orderer: &OrdererDefaults
     OrdererType: solo
 
     Addresses:
-        - orderer.nmi:7050
+        - solo.orderer.nmi:7050
 
     # Batch Timeout: The amount of time to wait before creating a batch
     BatchTimeout: 2s
